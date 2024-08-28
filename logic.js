@@ -71,7 +71,7 @@ function hash(str) {
   return hashValue;
 }
 function updateUID() {
-  document.getElementById("UIDDisplay").innerText="Your UID: " + hash(document.getElementById("nameInput").value)
+  document.getElementById("UIDDisplay").innerHTML="Your UID: <strong>" + hash(document.getElementById("nameInput").value) + "</strong>"
 }
 
 function createVotingForm() {
@@ -83,7 +83,7 @@ function createVotingForm() {
     const li = document.createElement("li");
     li.innerHTML = `
                     <span class="drag-handle"></span>
-                    <span>${option}</span>
+                    <span style="flex-grow: 1; text-align: center;">${option}</span>
                     <input type="number" id="rating_${index}" placeholder="Rating (-5 to 5)" value="0" min="-5" max="5" step="0.5">
                 `;
     form.appendChild(li);
@@ -153,7 +153,6 @@ function calculateResults() {
   };
 
   displayVoters();
-  displayWinners(results);
   displayResults(results);
 }
 
@@ -221,37 +220,13 @@ function displayVoters() {
   const numVotesContainer = document.getElementById("numVotes");
   numVotesContainer.innerHTML = "";
 
-  let span = document.createElement("p");
-  span.innerHTML = `# of votes: ${votes.length}`;
-  numVotesContainer.appendChild(span);
-
-  let voterIds = document.createElement("p");
-  voterIds.innerHTML = `Voters: ${votes.map(({uid, vote}) => uid).join(", ")}`;
-  numVotesContainer.appendChild(voterIds);
-}
-
-function displayWinners(results) {
-  const winnersContainer = document.getElementById("winnersContainer");
-  winnersContainer.innerHTML = "";
-
-  const systems = {
-    firstPastThePost: "First Past The Post",
-    rankChoice: "Rank Choice",
-    borda: "Borda Count",
-    approval: "Approval Voting",
-    rating: "Rating",
-  };
-
-  for (const [system, name] of Object.entries(systems)) {
-    const winner =
-      options[results[system].indexOf(Math.max(...results[system]))];
-    const p = document.createElement("p");
-    p.innerHTML = `<strong>${name} Winner:</strong> ${winner}`;
-    winnersContainer.appendChild(p);
-  }
+  let table = document.createElement("table");
+  table.innerHTML = `<tr><th># of votes</th><th>Voters</th></tr><tr><td>${votes.length}</td><td>${votes.map(({uid, vote}) => uid).join(", ")}</td></tr>`
+  numVotesContainer.appendChild(table);
 }
 
 function displayResults(results) {
+  let bests = Object.fromEntries(Object.entries(results).map(([system, arr]) => [system, Math.max(...arr)]))
   const table = document.getElementById("resultsTable");
   table.innerHTML = `
   <tr>

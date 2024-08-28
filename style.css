@@ -30,7 +30,7 @@ button:hover {
 }
 table {
   border-collapse: collapse;
-  width: 100%;
+  width: auto;
   margin-top: 20px;
 }
 th,
@@ -58,10 +58,13 @@ th {
 #optionsList li {
   background-color: #f0f0f0;
   margin: 5px 0;
-  padding: 10px;
+  padding: 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+#optionsList li span {
+  padding: 0 10px
 }
 #voteForm {
   list-style-type: none;
@@ -80,4 +83,10 @@ th {
   content: "☰";
   margin-right: 10px;
   cursor: move;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }

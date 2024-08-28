@@ -1,6 +1,5 @@
 let options = [];
 let votes = [];
-let uids = new Set();
 
 function addOption() {
   const option = document.getElementById("optionInput").value.trim();
@@ -190,7 +189,7 @@ function calculateBorda() {
   const scores = new Array(options.length).fill(0);
   votes.forEach(({uid, vote}) => {
     vote.forEach((v) => {
-      scores[v.index] += options.length - v.rank + 1;
+      scores[v.index] += options.length - v.rank;
     });
   });
   return scores;
@@ -220,8 +219,15 @@ function displayVoters() {
   const numVotesContainer = document.getElementById("numVotes");
   numVotesContainer.innerHTML = "";
 
+  let voters = votes.map(({uid, vote}) => uid);
+  for (let i = voters.length - 1; i > 0; i--) {
+    let j = Math.floor(Math.random() * (i + 1));
+    [voters[i], voters[j]] = [voters[j], voters[i]];
+  }
+
+
   let table = document.createElement("table");
-  table.innerHTML = `<tr><th># of votes</th><th>Voters</th></tr><tr><td>${votes.length}</td><td>${votes.map(({uid, vote}) => uid).join(", ")}</td></tr>`
+  table.innerHTML = `<tr><th># of votes</th><th>Voters (unordered)</th></tr><tr><td>${votes.length}</td><td>${voters.join(", ")}</td></tr>`
   numVotesContainer.appendChild(table);
 }
 
@@ -238,40 +244,57 @@ function displayResults(results) {
   <tr>
     <th>First Past The Post</th>
     ${results.firstPastThePost
-      .map((value) => `<td>${value}</td>`)
+      .map((value) => `<td${value == bests.firstPastThePost ? " class='winner'" : ""}>${value}</td>`)
       .join("")}
   </tr>
   <tr>
     <th>Rank Choice (Final Round)</th>
     ${results.rankChoice
-      .map((value) => `<td>${value}</td>`)
+      .map((value) => `<td${value == bests.rankChoice ? " class='winner'" : ""}>${value}</td>`)
       .join("")}
   </tr>
   <tr>
     <th>Borda Count</th>
     ${results.borda
-      .map((value) => `<td>${value}</td>`)
+      .map((value) => `<td${value == bests.borda ? " class='winner'" : ""}>${value}</td>`)
       .join("")}
   </tr>
   <tr>
     <th>Approval Voting</th>
     ${results.approval
-      .map((value) => `<td>${value}</td>`)
+      .map((value) => `<td${value == bests.approval ? " class='winner'" : ""}>${value}</td>`)
       .join("")}
   </tr>
   <tr>
     <th>Rating</th>
     ${results.rating
-      .map((value) => `<td>${value.toFixed(2)}</td>`)
+      .map((value) => `<td${value == bests.rating ? " class='winner'" : ""}>${value.toFixed(2)}</td>`)
       .join("")}
   </tr>
 `;
 }
 
 function resetVoting() {
-  votes = [];
-  document.getElementById("optionsSection").style.display = "block";
-  document.getElementById("votingSection").style.display = "none";
-  document.getElementById("resultsSection").style.display = "none";
-  updateOptionsList();
+  const optionsString = JSON.stringify(options);
+  const encodedOptions = encodeURIComponent(optionsString);
+
+  window.history.pushState({}, "", `?v=${encodedOptions}`);
+
+  location.reload();
 }
+
+window.onload = function() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const encodedOptions = urlParams.get('v');
+  
+  if (encodedOptions) {
+    try {
+      options = JSON.parse(decodeURIComponent(encodedOptions));
+      updateOptionsList();
+    } catch (error) {
+      console.error('Failed to parse options:', error);
+    }
+  }
+
+  updateOptionsList();
+};

@@ -1,6 +1,6 @@
 body {
   font-family: Arial, sans-serif;
-  max-width: 1200px;
+  max-width: 500px;
   margin: 0 auto;
   padding: 20px;
 }
@@ -26,7 +26,7 @@ button {
   transition: background-color 0.3s;
 }
 button:hover {
-  background-color: #2980b9;
+  background-color: #2077b0;
 }
 table {
   border-collapse: collapse;
@@ -84,9 +84,7 @@ th {
   margin-right: 10px;
   cursor: move;
 }
-
-.section {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+td.winner {
+  background: #aff5af;
+  color: black;
 }

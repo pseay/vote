@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vote Fair</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Vote Fair</h1>
+    
+    <div id="optionsSection">
+        <h2>Manage Options</h2>
+        <input type="text" id="optionInput" placeholder="Enter an option" onkeydown="if(event.key === 'Enter') addOption()">
+        <button onclick="addOption()">Add Option</button>
+        <ul id="optionsList"></ul>
+        <button onclick="submitOptions()">Start Voting</button>
+    </div>
+
+    <div id="votingSection" style="display: none;">
+        <h2>Vote</h2>
+        <p>Drag and drop to rank the options. -5 is the lowest rating, 5 is the highest.</p>
+        <label>Make a Random ID Word: </label><input id="nameInput" type="text" onkeyup="updateUID()">
+        <span id="UIDDisplay">Your UID: 0</span>
+        <ul id="voteForm"></ul>
+        <button onclick="submitVote()">Submit Vote</button>
+        <button onclick="finishVoting()">All votes submitted?</button>
+    </div>
+
+    <div id="resultsSection" style="display: none;">
+        <h2>Results</h2>
+        <div id="numVotes"></div>
+        <div id="winnersContainer"></div>
+        <table id="resultsTable"></table>
+        <button onclick="resetVoting()">Reset Voting</button>
+    </div>
+    <script src="logic.js"></script>
+</body>
+</html>

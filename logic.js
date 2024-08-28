@@ -254,29 +254,43 @@ function displayWinners(results) {
 function displayResults(results) {
   const table = document.getElementById("resultsTable");
   table.innerHTML = `
-                <tr>
-                    <th>Option</th>
-                    <th>First Past The Post</th>
-                    <th>Rank Choice (Final Round)</th>
-                    <th>Borda Count</th>
-                    <th>Approval Voting</th>
-                    <th>Rating</th>
-                </tr>
-                ${options
-                  .map(
-                    (option, i) => `
-                    <tr>
-                        <td>${option}</td>
-                        <td>${results.firstPastThePost[i]}</td>
-                        <td>${results.rankChoice[i]}</td>
-                        <td>${results.borda[i]}</td>
-                        <td>${results.approval[i]}</td>
-                        <td>${results.rating[i].toFixed(2)}</td>
-                    </tr>
-                `
-                  )
-                  .join("")}
-            `;
+  <tr>
+    <th>System</th>
+    ${options
+      .map((option) => `<th>${option}</th>`)
+      .join("")}
+  </tr>
+  <tr>
+    <th>First Past The Post</th>
+    ${results.firstPastThePost
+      .map((value) => `<td>${value}</td>`)
+      .join("")}
+  </tr>
+  <tr>
+    <th>Rank Choice (Final Round)</th>
+    ${results.rankChoice
+      .map((value) => `<td>${value}</td>`)
+      .join("")}
+  </tr>
+  <tr>
+    <th>Borda Count</th>
+    ${results.borda
+      .map((value) => `<td>${value}</td>`)
+      .join("")}
+  </tr>
+  <tr>
+    <th>Approval Voting</th>
+    ${results.approval
+      .map((value) => `<td>${value}</td>`)
+      .join("")}
+  </tr>
+  <tr>
+    <th>Rating</th>
+    ${results.rating
+      .map((value) => `<td>${value.toFixed(2)}</td>`)
+      .join("")}
+  </tr>
+`;
 }
 
 function resetVoting() {

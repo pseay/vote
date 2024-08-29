@@ -12,6 +12,12 @@ function addOption() {
   }
 }
 
+function clearOptions() {
+  sessionStorage.removeItem("options")
+  sessionStorage.removeItem("votes")
+  location.reload();
+}
+
 function updateOptionsList() {
   const list = document.getElementById("optionsList");
   list.innerHTML = "";
@@ -26,6 +32,7 @@ function updateOptionsList() {
                 `;
     list.appendChild(li);
   });
+  sessionStorage.setItem('options', JSON.stringify(options));
 }
 
 function editOption(index) {
@@ -48,9 +55,8 @@ function submitOptions() {
     alert("Please add at least two options.");
     return;
   }
-  document.getElementById("optionsSection").style.display = "none";
-  document.getElementById("votingSection").style.display = "block";
-  createVotingForm();
+  window.history.pushState({}, "", "?page=vote");
+  location.reload();
 }
 
 function hash(str) {
@@ -131,19 +137,19 @@ function submitVote() {
 
   let uid = hash(document.querySelector("#nameInput").value);
   votes.push({ uid, vote });
+  sessionStorage.setItem('votes', JSON.stringify(votes));
 
   const jsConfetti = new JSConfetti();
   jsConfetti.addConfetti({
-    emojis: ['👍','✅','🗳️','📃'],
+    emojis: ["👍", "✅", "🗳️", "📃"],
   });
 
   let submitVoteButton = document.getElementById("submitVoteButton");
   submitVoteButton.onclick = null;
   setTimeout(() => {
-    submitVoteButton.onclick = submitVote;
-  }, 500);
-
-  createVotingForm();
+    window.history.pushState({}, "", "?page=vote");
+    location.reload();
+  }, 1000);
 }
 
 function finishVoting() {
@@ -151,9 +157,8 @@ function finishVoting() {
     alert("Please submit at least one vote before finishing.");
     return;
   }
-  document.getElementById("votingSection").style.display = "none";
-  document.getElementById("resultsSection").style.display = "block";
-  calculateResults();
+  window.history.pushState({}, "", "?page=results");
+  location.reload();
 }
 
 function calculateResults() {
@@ -312,25 +317,59 @@ function displayResults(results) {
 
 function resetVoting() {
   const optionsString = JSON.stringify(options);
-  const encodedOptions = encodeURIComponent(optionsString);
+  sessionStorage.setItem('options', optionsString);
 
-  window.history.pushState({}, "", `?v=${encodedOptions}`);
+  sessionStorage.removeItem('votes');
 
+  window.history.pushState({}, "", "?page=options");
   location.reload();
 }
 
-window.onload = function () {
-  const urlParams = new URLSearchParams(window.location.search);
-  const encodedOptions = urlParams.get("v");
+function showOptionsPage() {
+  document.getElementById("optionsSection").style.display = "block";
+  document.getElementById("votingSection").style.display = "none";
+  document.getElementById("resultsSection").style.display = "none";
+  updateOptionsList();
+}
+function showVotingPage() {
+  document.getElementById("optionsSection").style.display = "none";
+  document.getElementById("votingSection").style.display = "block";
+  document.getElementById("resultsSection").style.display = "none";
+  createVotingForm();
+}
+function showResultsPage() {
+  document.getElementById("optionsSection").style.display = "none";
+  document.getElementById("votingSection").style.display = "none";
+  document.getElementById("resultsSection").style.display = "block";
+  calculateResults();
+}
 
-  if (encodedOptions) {
+window.onload = function () {
+  // Load options and votes from sessionStorage 
+  const storedOptions = sessionStorage.getItem('options');
+  const storedVotes = sessionStorage.getItem('votes');
+  if (storedOptions) {
     try {
-      options = JSON.parse(decodeURIComponent(encodedOptions));
-      updateOptionsList();
+      options = JSON.parse(storedOptions) || [];
+      votes = JSON.parse(storedVotes) || [];
     } catch (error) {
-      console.error("Failed to parse options:", error);
+      console.error("Failed to parse stored options or votes:", error);
     }
   }
-
-  updateOptionsList();
+  console.log({options, votes});
+  // Route to correct page
+  const urlParams = new URLSearchParams(window.location.search);
+  const currentPage = urlParams.get("page");
+  console.log({currentPage});
+    
+  switch(currentPage) {
+    case 'vote':
+        showVotingPage();
+        break;
+    case 'results':
+        showResultsPage();
+        break;
+    default:
+        showOptionsPage();
+  }
 };

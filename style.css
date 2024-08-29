@@ -3,14 +3,15 @@ body {
   max-width: 500px;
   margin: 0 auto;
   padding: 20px;
+  background: #fafafa;
 }
 h1,
 h2 {
   color: #2c3e50;
 }
 h1 {
-    text-decoration: underline;
-    text-align: center;
+  text-decoration: underline;
+  text-align: center;
 }
 input,
 button {
@@ -35,16 +36,16 @@ table {
 }
 th,
 td {
-  border: 1px solid #ddd;
+  border: 1px solid #aaa;
   padding: 8px;
   text-align: left;
+  background: #fff;
 }
 th {
-  background-color: #f2f2f2;
+  background-color: #eee;
 }
 .winner {
   font-weight: bold;
-  color: green;
 }
 .chart-container {
   width: 100%;
@@ -64,7 +65,7 @@ th {
   align-items: center;
 }
 #optionsList li span {
-  padding: 0 10px
+  padding: 0 10px;
 }
 #voteForm {
   list-style-type: none;
@@ -85,6 +86,46 @@ th {
   cursor: move;
 }
 td.winner {
-  background: #aff5af;
+  background: #bcf8bc;
   color: black;
+}
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 300px;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -100px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+}
+
+.question-mark {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  background-color: #007bff;
+  color: white;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 20px;
+  font-weight: bold;
 }

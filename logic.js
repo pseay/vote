@@ -64,17 +64,20 @@ function hash(str) {
   }
 
   hashValue += "";
-  hashaBet = [..."Z8WDYMQPL0"]
-  hashValue = [...hashValue].map(index => hashaBet[index]).join("")
+  hashaBet = [..."Z8WDYMQPL0"];
+  hashValue = [...hashValue].map((index) => hashaBet[index]).join("");
 
   return hashValue;
 }
 function updateUID() {
-  document.getElementById("UIDDisplay").innerHTML="Your UID: <strong>" + hash(document.getElementById("nameInput").value) + "</strong>"
+  document.getElementById("UIDDisplay").innerHTML =
+    "Your UID: <strong>" +
+    hash(document.getElementById("nameInput").value) +
+    "</strong>";
 }
 
 function createVotingForm() {
-  document.getElementById("nameInput").value="";
+  document.getElementById("nameInput").value = "";
   updateUID();
   const form = document.getElementById("voteForm");
   form.innerHTML = "";
@@ -128,7 +131,16 @@ function submitVote() {
 
   let uid = hash(document.querySelector("#nameInput").value);
   votes.push({ uid, vote });
-  alert(`Vote submitted!`);
+
+  const jsConfetti = new JSConfetti();
+  jsConfetti.addConfetti();
+
+  let submitVoteButton = document.getElementById("submitVoteButton");
+  submitVoteButton.onclick = null;
+  setTimeout(() => {
+    submitVoteButton.onclick = submitVote;
+  }, 500);
+
   createVotingForm();
 }
 
@@ -157,7 +169,7 @@ function calculateResults() {
 
 function calculateFirstPastThePost() {
   const counts = new Array(options.length).fill(0);
-  votes.forEach(({uid, vote}) => {
+  votes.forEach(({ uid, vote }) => {
     const winner = vote.find((v) => v.rank === 1).index;
     counts[winner]++;
   });
@@ -169,7 +181,7 @@ function calculateRankChoice() {
   const rounds = [];
   while (remainingOptions.length > 1) {
     const counts = new Array(options.length).fill(0);
-    votes.forEach(({uid, vote}) => {
+    votes.forEach(({ uid, vote }) => {
       const validVote = vote.filter((v) =>
         remainingOptions.includes(options[v.index])
       );
@@ -187,7 +199,7 @@ function calculateRankChoice() {
 
 function calculateBorda() {
   const scores = new Array(options.length).fill(0);
-  votes.forEach(({uid, vote}) => {
+  votes.forEach(({ uid, vote }) => {
     vote.forEach((v) => {
       scores[v.index] += options.length - v.rank;
     });
@@ -197,7 +209,7 @@ function calculateBorda() {
 
 function calculateApproval() {
   const counts = new Array(options.length).fill(0);
-  votes.forEach(({uid, vote}) => {
+  votes.forEach(({ uid, vote }) => {
     vote.forEach((v) => {
       if (v.rating > 0) counts[v.index]++;
     });
@@ -207,68 +219,90 @@ function calculateApproval() {
 
 function calculateRating() {
   const totals = new Array(options.length).fill(0);
-  votes.forEach(({uid, vote}) => {
+  votes.forEach(({ uid, vote }) => {
     vote.forEach((v) => {
       totals[v.index] += v.rating;
     });
   });
-  return totals;
+  return totals.map((value) => value / votes.length);
 }
 
 function displayVoters() {
   const numVotesContainer = document.getElementById("numVotes");
   numVotesContainer.innerHTML = "";
 
-  let voters = votes.map(({uid, vote}) => uid);
+  let voters = votes.map(({ uid, vote }) => uid);
   for (let i = voters.length - 1; i > 0; i--) {
     let j = Math.floor(Math.random() * (i + 1));
     [voters[i], voters[j]] = [voters[j], voters[i]];
   }
 
-
   let table = document.createElement("table");
-  table.innerHTML = `<tr><th># of votes</th><th>Voters (unordered)</th></tr><tr><td>${votes.length}</td><td>${voters.join(", ")}</td></tr>`
+  table.innerHTML = `<tr><th># of Votes</th><th>Voters (unordered)</th></tr><tr><td>${
+    votes.length
+  }</td><td>${voters.join(", ")}</td></tr>`;
   numVotesContainer.appendChild(table);
 }
 
 function displayResults(results) {
-  let bests = Object.fromEntries(Object.entries(results).map(([system, arr]) => [system, Math.max(...arr)]))
+  let bests = Object.fromEntries(
+    Object.entries(results).map(([system, arr]) => [system, Math.max(...arr)])
+  );
   const table = document.getElementById("resultsTable");
   table.innerHTML = `
   <tr>
     <th>System</th>
-    ${options
-      .map((option) => `<th>${option}</th>`)
-      .join("")}
+    ${options.map((option) => `<th>${option}</th>`).join("")}
   </tr>
   <tr>
     <th>First Past The Post</th>
     ${results.firstPastThePost
-      .map((value) => `<td${value == bests.firstPastThePost ? " class='winner'" : ""}>${value}</td>`)
+      .map(
+        (value) =>
+          `<td${
+            value == bests.firstPastThePost ? " class='winner'" : ""
+          }>${value}</td>`
+      )
       .join("")}
   </tr>
   <tr>
     <th>Rank Choice (Final Round)</th>
     ${results.rankChoice
-      .map((value) => `<td${value == bests.rankChoice ? " class='winner'" : ""}>${value}</td>`)
+      .map(
+        (value) =>
+          `<td${
+            value == bests.rankChoice ? " class='winner'" : ""
+          }>${value}</td>`
+      )
       .join("")}
   </tr>
   <tr>
     <th>Borda Count</th>
     ${results.borda
-      .map((value) => `<td${value == bests.borda ? " class='winner'" : ""}>${value}</td>`)
+      .map(
+        (value) =>
+          `<td${value == bests.borda ? " class='winner'" : ""}>${value}</td>`
+      )
       .join("")}
   </tr>
   <tr>
     <th>Approval Voting</th>
     ${results.approval
-      .map((value) => `<td${value == bests.approval ? " class='winner'" : ""}>${value}</td>`)
+      .map(
+        (value) =>
+          `<td${value == bests.approval ? " class='winner'" : ""}>${value}</td>`
+      )
       .join("")}
   </tr>
   <tr>
     <th>Rating</th>
     ${results.rating
-      .map((value) => `<td${value == bests.rating ? " class='winner'" : ""}>${value.toFixed(2)}</td>`)
+      .map(
+        (value) =>
+          `<td${value == bests.rating ? " class='winner'" : ""}>${value.toFixed(
+            2
+          )}</td>`
+      )
       .join("")}
   </tr>
 `;
@@ -283,16 +317,16 @@ function resetVoting() {
   location.reload();
 }
 
-window.onload = function() {
+window.onload = function () {
   const urlParams = new URLSearchParams(window.location.search);
-  const encodedOptions = urlParams.get('v');
-  
+  const encodedOptions = urlParams.get("v");
+
   if (encodedOptions) {
     try {
       options = JSON.parse(decodeURIComponent(encodedOptions));
       updateOptionsList();
     } catch (error) {
-      console.error('Failed to parse options:', error);
+      console.error("Failed to parse options:", error);
     }
   }
 

@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vote Fair</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-confetti@latest/dist/js-confetti.browser.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -21,11 +22,16 @@
     <div id="votingSection" class="section" style="display: none;">
         <h2>Vote</h2>
         <p>Drag and drop to rank the options.<br>Input your rating: -5 is the lowest rating, 5 is the highest.</p>
-        <label>Make a Random ID Word: </label><input id="nameInput" type="text" onkeyup="updateUID()">
+        <label>Make a Random ID Word: </label>
+        <span class="tooltip">
+            <span class="question-mark">?</span>
+            <span class="tooltiptext">This word generates your User ID (UID), which will be assigned for anonymous voting. Only you will know your UID, but all UIDs will be published after voting to verify inclusion.</span>
+        </span>
+        <input id="nameInput" type="text" onkeyup="updateUID()">
         <br>
         <span id="UIDDisplay">Your UID: <strong>0</strong></span>
         <ul id="voteForm"></ul>
-        <button onclick="submitVote()">Submit Vote</button>
+        <button id="submitVoteButton" onclick="submitVote()">Submit Vote</button>
         <button onclick="finishVoting()">All votes submitted?</button>
     </div>
 

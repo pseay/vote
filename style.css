@@ -20,6 +20,9 @@ button {
   border: 1px solid #bdc3c7;
   border-radius: 4px;
 }
+input {
+  font-size: 16px;
+}
 button {
   background-color: #3498db;
   color: white;

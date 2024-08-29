@@ -133,7 +133,9 @@ function submitVote() {
   votes.push({ uid, vote });
 
   const jsConfetti = new JSConfetti();
-  jsConfetti.addConfetti();
+  jsConfetti.addConfetti({
+    emojis: ['👍','✅','🗳️','📃'],
+  });
 
   let submitVoteButton = document.getElementById("submitVoteButton");
   submitVoteButton.onclick = null;
